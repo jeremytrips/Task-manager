@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}journal: {{task_list.title}}{% endblock %}
+
+
+{% block body %}
+    <div>
+        {{task_list.title}}<br/>
+        {{task_list.dateCreated | date('d/m/Y') }}<br/>
+        {{task_list.dateModified | date('d/m/Y')}}<br/>
+    </div>
+    <div>
+        {% for task in task_list.Tasks %}
+            <div style="display: flex; border: thin solid; margin: 10px; border-color: red; padding-left: 10px;">
+                <p style="flex: 0.70;"> {{task.Description}} </p>
+                <p style="flex: 0.20;"> {{task.DateCreated | date('d/m/Y')}} </p>
+                {% if task.IsDone %}
+                    <input type="checkbox" checked style="flex: 0.10; align-self: center;" />
+                {% else %}
+                    <input type="checkbox" style="flex: 0.10; align-self: center;" />
+                {% endif %}
+                
+            </div>
+        {% else %}
+            <h3> No tasks yes </h3>
+        {% endfor %}
+    </div>
+{% endblock %}

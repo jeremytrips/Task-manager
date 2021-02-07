@@ -2,6 +2,12 @@
 
 {% block title %}Journal{% endblock %}
 
+
 {% block body %}
-    
+    {% for tasklist in tasklists %}
+        <tasklist class="title">
+            <a href="{{ path('task_list', {'listId': tasklist.id}) }}">{{tasklist.title}} </a>
+            <br/>
+        </tasklist>    
+    {% endfor %}
 {% endblock %}
