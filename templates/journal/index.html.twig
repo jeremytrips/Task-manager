@@ -4,21 +4,34 @@
 
 
 {% block body %}
-
-    <div>
-        {% for tasklist in tasklists %}
-            <tasklist class="title" style="display: flex; border: thin solid; margin: 10px; border-color: red; padding-left: 10px;">
-                <a href="{{ path('task_list', {'id': tasklist.id}) }}" style="flex: 0.8">{{tasklist.title}} </a>
-                <form action="{{ path('delete_list', {'id': tasklist.id}) }}">
-                    <input type="submit" value="Delete" style="flex: 0.2" />
-                </form>
-            </tasklist>
-        {% endfor %}
+    <div style="width: 75%; margin-left:12.5%;">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th style="text-align:center;" scope="col">Title</th>
+                    <th style="text-align:center;" scope="col">Date modified</th>
+                    <th style="text-align:center;" scope="col">Date created</th>
+                </tr>
+            </thead>
+            {% for tasklist in tasklists %}
+                <tbody>
+                    <tr class="table-active">
+                        <td  style="cursor: pointer; text-align:center;"  onclick="window.location='{{  path('task_list', {'id': tasklist.id}) }}';">{{tasklist.title}}</td>
+                        <td style="text-align:center;">{{tasklist.dateModified | date('d/m/y')}}</td>
+                        <td style="text-align:center;">{{tasklist.dateCreated | date('d/m/y')}}</td>
+                        <td style="padding-top: 4px;padding-bottom: 0px;">
+                            <button type="button" class="btn btn-outline-danger" onclick="window.location='{{  path('delete_list', {'id': tasklist.id}) }}';" style="float: right;">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            {% endfor %}
+        </table>
     </div>
+    <div class="form-group" style="width: 50%; margin-left: 25%;">
+        {{form_start(tasklist_form)}}
+            {{form_row(tasklist_form.title)}}
 
-    {{form_start(tasklist_form)}}
-        {{form_row(tasklist_form.title)}}
-        <button type="submit">Save</button>
-    {{form_end(tasklist_form)}}
-
+            <button type="submit" class="btn btn-success">Save</button>
+        {{form_end(tasklist_form)}}
+    </div>
 {% endblock %}

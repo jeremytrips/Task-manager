@@ -4,10 +4,18 @@
 
 
 {% block body %}
-    <div>
-        {{task_list.title}}<br/>
-        {{task_list.dateCreated | date('d/m/Y') }}<br/>
-        {{task_list.dateModified | date('d/m/Y')}}<br/>
+
+    <div class="jumbotron">
+        <h1 class="display-5">{{task_list.title}}</h1>
+        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        <div style="justify-content: space-between; width: 60%; margin-left: 20%; display:flex">
+            <div style="margin-left: 025px;">
+                <p>Date created {{task_list.dateCreated | date('d/m/Y') }}</p>
+            </div>
+            <div style="margin-right: 025px;">
+                <p>Last update: {{task_list.dateModified | date('d/m/Y') }}</p>
+            </div>
+        </div>
     </div>
     <div>
         {% for task in task_list.Tasks %}

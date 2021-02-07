@@ -34,7 +34,9 @@ class JournalController extends AbstractController
                      ->setAction($this->generateUrl('new_task_list'))
                      ->add('title',
                          TextType::class,[
-                            'attr' => ['placeholder' => "List title"],
+                            'label' => 'New list:',
+                            'label_attr' => ['class' => "col-form-label"],
+                            'attr' => ['placeholder' => "List title", 'class' => "form-control"],
                             'constraints' => [new NotBlank()]
                         ])
                      ->getForm();
@@ -80,7 +82,7 @@ class JournalController extends AbstractController
         $manager->remove($taskList);
         $manager->flush();
 
-        return $this->redirectToRoute("journal");
+        return $this->redirectToRoute("task_list");
     }
 
     /**
