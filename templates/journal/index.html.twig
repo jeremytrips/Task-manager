@@ -4,10 +4,21 @@
 
 
 {% block body %}
-    {% for tasklist in tasklists %}
-        <tasklist class="title">
-            <a href="{{ path('task_list', {'listId': tasklist.id}) }}">{{tasklist.title}} </a>
-            <br/>
-        </tasklist>    
-    {% endfor %}
+
+    <div>
+        {% for tasklist in tasklists %}
+            <tasklist class="title" style="display: flex; border: thin solid; margin: 10px; border-color: red; padding-left: 10px;">
+                <a href="{{ path('task_list', {'id': tasklist.id}) }}" style="flex: 0.8">{{tasklist.title}} </a>
+                <form action="{{ path('delete_list', {'id': tasklist.id}) }}">
+                    <input type="submit" value="Delete" style="flex: 0.2" />
+                </form>
+            </tasklist>
+        {% endfor %}
+    </div>
+
+    {{form_start(tasklist_form)}}
+        {{form_row(tasklist_form.title)}}
+        <button type="submit">Save</button>
+    {{form_end(tasklist_form)}}
+
 {% endblock %}

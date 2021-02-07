@@ -2,35 +2,93 @@
 
 namespace App\Controller;
 
-use App\Entity\TaskList;
-use App\Repository\TaskListRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use DateTime;
+use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 
+use App\Entity\TaskList;
+use App\Repository\TaskListRepository;
+
+use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
 class JournalController extends AbstractController
 {
     /**
-     * @Route("/", name="journal")
+     * @Route("/", name="lists")
      */
     public function index(TaskListRepository $repo): Response
     {
         // Index of the website. Retrieve every lists and return them in the context.
+        $defaultData = ['message'=>'Description'];
+        $form = $this->createFormBuilder($defaultData)
+                     ->setAction($this->generateUrl('new_task_list'))
+                     ->add('title',
+                         TextType::class,[
+                            'attr' => ['placeholder' => "List title"],
+                            'constraints' => [new NotBlank()]
+                        ])
+                     ->getForm();
+       
         return $this->render(
             'journal/index.html.twig', [
-                'tasklists' => $repo->findAll()
+                'tasklists' => $repo->findAll(),
+                'tasklist_form'=> $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/new", name="new_task_list")
+     */
+    public function CreateNewList(Request $request, EntityManagerInterface $manager, LoggerInterface $logger)
+    {
+        // Check if the ParameterBag has a size.
+
+        $taskList = new TaskList();
+        $form = $this->createFormBuilder($taskList)
+                     ->add("title")
+                     ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $taskList->setDateCreated(new DateTimeImmutable())
+                     ->setDateModified(new DateTime());
+            $manager->persist($taskList);
+            $manager->flush();
+            return $this->redirectToRoute("task_list", ['id'=>$taskList->getId()]);
+        }
+
+        return $this->render(
+            'test.html.twig'
+        );
+    }
+
+    /**
+     * @Route("/delete/{id}", name="delete_list")
+     */
+    public function DeleteList(TaskList $taskList, EntityManagerInterface $manager)
+    {
+        $manager->remove($taskList);
+        $manager->flush();
+
+        return $this->redirectToRoute("journal");
     }
 
     /**
      * @Route("/{id}", name="task_list")
      */
-    public function FunctionName(TaskList $taskList, LoggerInterface $logger)
+    public function ListTask(TaskList $taskList)
     {
-        // Return the id list and display all it's task.
-        // Use paramConverter to return the list with id = id   
+        // Return the id Tasklist and display all tasks.
         return $this->render(
             'journal/tasklist.html.twig', [
                 'task_list' => $taskList,
