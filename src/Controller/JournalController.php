@@ -88,9 +88,12 @@ class JournalController extends AbstractController
     public function DeleteList($id, TaskListRepository $repo, EntityManagerInterface $manager, LoggerInterface $logger)
     {
         $taskList = $repo->find($id);
+        $listTitle = $taskList->getTitle();
         $manager->remove($taskList);
         $manager->flush();
-        // todo maybe add flash message
+        
+        $this->addFlash("notice", sprintf("List %s has been deleted", $listTitle));
+
         return $this->redirectToRoute("lists");
     }
 
