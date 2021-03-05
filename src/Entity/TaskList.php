@@ -35,9 +35,15 @@ class TaskList
     private $DateModified;
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="taskList")
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="taskList", cascade={"remove"})
+     * 
      */
     private $Tasks;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $Description;
 
     public function __construct()
     {
@@ -111,6 +117,18 @@ class TaskList
                 $task->setTaskList(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->Description;
+    }
+
+    public function setDescription(?string $Description): self
+    {
+        $this->Description = $Description;
 
         return $this;
     }
