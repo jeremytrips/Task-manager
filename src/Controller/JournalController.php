@@ -13,6 +13,7 @@ use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,24 +108,34 @@ class JournalController extends AbstractController
                      ->setAction($this->generateUrl('create_task', ['id' => $taskList->getId()]))
                      ->add('description',
                          TextType::class,[
-                            'label' => 'New list:',
+                            'label' => 'New Task:',
                             'label_attr' => ['class' => "col-form-label"],
-                            'attr' => ['placeholder' => "List title", 'class' => "form-control"],
+                            'attr' => ['placeholder' => "Task name", 'class' => "form-control"],
                             'constraints' => [new NotBlank()]
                         ])
                      ->getForm();
+        $modifyTaskForm = $this->createFormBuilder()
+                            //    ->setAction($this->generateUrl("modify_task",  ['id' => $taskList->getId()]))
+                               ->add("Description",
+                               TextType::class,[
+                                'label' => false,
+                                'attr' => ['placeholder' => "New description", 'class' => "form-control",  "style"=>"width: 327%"],
+                                'constraints' => [new NotBlank()]
+                            ])
+                            ->getForm();
         
         return $this->render(
             'journal/tasklist.html.twig', [
                 'task_list' => $taskList,
-                'task_form' => $form->createView()
+                'task_form' => $form->createView(),
+                'modify_task_form' => $modifyTaskForm
         ]);
     }
     
     /**
      * @Route("/task/create/{id}", name="create_task")
      */
-    public function NewTask($id, TaskListRepository $repo, Request $request, EntityManagerInterface $manager, LoggerInterface $logger)
+    public function NewTask($id, Request $request, TaskListRepository $repo, EntityManagerInterface $manager, LoggerInterface $logger)
     {
         $task = new Task();
         $form = $this->createFormBuilder($task)
@@ -142,32 +153,32 @@ class JournalController extends AbstractController
             $manager->persist($task);
             $manager->flush();
             return $this->redirectToRoute("task_list", ['id'=>$id]);
+        } else {
+            return $this->render('test.html.twig');
         }
-        // Todo redirect with errors
-        return $this->render(
-            'test.html.twig'
-        );
     }
 
     /**
      * @Route("task/modify/{id}", name="modify_task")
      */
-    public function ModifyTask($id, Request $request, EntityManagerInterface $manager, TaskRepository $repo)
+    public function ModifyTask($id, Request $request, EntityManagerInterface $manager, TaskRepository $repo, LoggerInterface $logger)
     {
         $task = $repo->find($id);
-        $listId = $task->getTaskList()->getId();
-        $form = $this->createForm(Task::class, $task);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()){
+        $method = $request->getMethod();
+        $logger->warning($method);
+        $newDescription = $request->request->get("Description"); 
+        if($method == "POST"){
+            $task->setDescription($newDescription);
+            $manager->persist($task);
             $manager->flush();
-            return $this->redirectToRoute("task_list", ['id'=>$listId]);
+            return $this->redirectToRoute("task_list", ['id'=>$task->getTaskList()->getId()]);
+        } else {
+            return $this->render(
+                'test.html.twig',
+            );
         }
 
-        // Todo redirect with errors
-        return $this->render(
-            'test.html.twig',
-        );
+
     }
 
     /**

@@ -1,22 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}journal: {{task_list.title}}{% endblock %}
+{% block title %}journal | {{task_list.title}}{% endblock %}
 {% block javascript %}
 <script>
-function setToModify(taskId) {
-    const list = document.getElementById(`taskId${taskId}`);
-    const nodes = list.parentNode.children;
-    const currentTaskText = nodes[0].innerHTML
-    const modifyItemLayout = document.createElement('td');
 
-
-    // Erreur de la manipulation entre le innerhtml et javascript
-    
-    list.parentNode.replaceChild(document.createElement('td'), nodes[1]);
-    list.parentNode.replaceChild(document.createElement('td'), nodes[2]);
-    // list.parentNode.remove(nodes[2]);
-    list.parentNode.replaceChild(modifyItemLayout, nodes[0]);
-}
 </script>
 {% endblock %}
 
@@ -48,7 +35,6 @@ function setToModify(taskId) {
             <tbody>
                 {% for task in task_list.Tasks %}
                     <tr class="table-active" style="width: 100px; overflow: hidden;">
-                        {# <div id="taskId{{task.id}}"> #}
                             <td id="taskId{{task.id}}" style="width: 10%; overflow: hidden; text-align:center;">{{task.Description}}</td>
                             <td style="width: 5%; text-align:center;">{{task.dateCreated | date('d/m/y')}}</td>
                             <td style="width: 75%; padding-top: 0px;padding-bottom: 0px;">
@@ -59,7 +45,7 @@ function setToModify(taskId) {
                                         <i class="fa fa-check-circle-o" style="background-color: 'red';"></i>
                                     {% endif %}
                                 </Button>                                
-                                <Button style="border: none; color: white; padding: 12px 16px; font-size: 16px; cursor: pointer; background: transparent" onclick="setToModify({{task.id}})">
+                                <Button style="border: none; color: white; padding: 12px 16px; font-size: 16px; cursor: pointer; background: transparent" onclick="setToModify{{task.id}}({{task.id}})">
                                     {# create the modify view #}
                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                 </Button>
@@ -67,13 +53,50 @@ function setToModify(taskId) {
                                     <i class="fa fa-times" aria-hidden="true"></i>
                                 </Button>
                             </td>
-                        {# </div> #}
                     </tr>
+                    <script>
+                        function setToModify{{task.id}}(id){
+                            const list = document.getElementById(`taskId${id}`);
+                            const nodes = list.parentNode.children;
+                            const currentTaskText = nodes[0].innerHTML
+                            let temp = document.createElement("td");
+                            let form = document.createElement("form");
+                            let input = document.createElement("input");
+                            let button = document.createElement("button");
+
+                            form.setAttribute("action", "/task/modify/{{task.id}}");
+                            form.setAttribute("method", "POST");
+                            form.setAttribute("style", "width: 100%");
+
+                            button.setAttribute("type","submit");
+                            button.setAttribute("class","btn btn-success");
+                            button.innerHTML = "Save";
+
+                            input.setAttribute("type", "text");
+                            input.setAttribute("id", "Description");
+                            input.setAttribute("name", "Description");
+                            input.setAttribute("required", "required");
+                            input.setAttribute("placeholder", "{{task.Description}}");
+                            input.setAttribute("class", "form-control");
+
+                            form.append(input);
+                            form.append(button);
+
+                            let modifyItemLayout = document.createElement('td');
+                            modifyItemLayout.append(form);
+
+                            list.parentNode.replaceChild(document.createElement('td'), nodes[1]);
+                            list.parentNode.replaceChild(document.createElement('td'), nodes[2]);
+                            list.parentNode.replaceChild(modifyItemLayout, nodes[0]);
+                        }
+                    </script>
                 {% endfor %}
             </tbody>
         </table>
+        <div>
+        </div>
         {% else %}
-            {# Display no tasks info #}
+            <h4>No task yet</h4>
         {% endif %}
         <div>
             {{form_start(task_form)}}
@@ -84,18 +107,3 @@ function setToModify(taskId) {
 
     </div>
 {% endblock %}
-
-{# 
-<div style="display: flex; border: thin solid; margin: 10px; border-color: red; padding-left: 10px;">
-    <p style="flex: 0.70; text-align: left"> {{task.Description}} </p>
-    <p style="flex: 0.20;"> {{task.DateCreated | date('d/m/Y')}} </p>
-    {% if task.IsDone %}
-        <input type="checkbox" checked style="flex: 0.10; align-self: center;" />
-    {% else %}
-        <input type="checkbox" style="flex: 0.10; align-self: center;" />
-    {% endif %}
-    <Button style="border: none; color: white; padding: 12px 16px; font-size: 16px; cursor: pointer; background: transparent">
-        <i class="fa fa-times" aria-hidden="true"></i>
-    </Button>
-</div> 
-#}
