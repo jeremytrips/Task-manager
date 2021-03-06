@@ -19,6 +19,15 @@ class TaskListRepository extends ServiceEntityRepository
         parent::__construct($registry, TaskList::class);
     }
 
+    public function findByQuery($query){
+        return $this->createQueryBuilder('t')
+                    ->orWhere("t.Title LIKE :queryDesc")
+                    ->orWhere("t.Description LIKE :queryDesc")
+                    ->setParameter("queryDesc", '%'.$query.'%')
+                    ->getQuery()
+                    ->getResult();
+    }
+
     // /**
     //  * @return TaskList[] Returns an array of TaskList objects
     //  */

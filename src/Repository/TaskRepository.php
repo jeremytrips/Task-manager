@@ -19,6 +19,14 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    public function findByQuery($query){
+        return $this->createQueryBuilder('t')
+                    ->orWhere("t.Description LIKE :queryDesc")
+                    ->setParameter("queryDesc", '%'.$query.'%')
+                    ->getQuery()
+                    ->getResult();
+    }
+
     // /**
     //  * @return Task[] Returns an array of Task objects
     //  */

@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\VarDumper\VarDumper;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
@@ -54,6 +55,22 @@ class JournalController extends AbstractController
             'journal/index.html.twig', [
                 'tasklists' => $repo->findAll(),
                 'tasklist_form'=> $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/q/", name="query")
+     */
+    public function find(Request $request, TaskListRepository $taskListRepo, TaskRepository $taskRepo ,LoggerInterface $logger)
+    {
+        $query = $request->request->get("query");
+        $taskListQuery = $taskListRepo->findByQuery($query);
+        $tasksQuery = $taskRepo->findByQuery($query);
+                
+        return $this->render(
+            'journal/query.html.twig', [
+                'tasklists_results' => $taskListQuery,
+                'tasks_results' => $tasksQuery
         ]);
     }
 
@@ -165,7 +182,6 @@ class JournalController extends AbstractController
     {
         $task = $repo->find($id);
         $method = $request->getMethod();
-        $logger->warning($method);
         $newDescription = $request->request->get("Description"); 
         if($method == "POST"){
             $task->setDescription($newDescription);
