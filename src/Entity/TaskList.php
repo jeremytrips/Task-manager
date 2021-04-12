@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\TaskListRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TaskListRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TaskListRepository::class)
@@ -16,32 +17,37 @@ class TaskList
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"tasklist_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"tasklist_read"})
      */
     private $Title;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"tasklist_read"})
      */
     private $DateCreated;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"tasklist_read"})
      */
     private $DateModified;
 
     /**
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="taskList", cascade={"remove"})
-     * 
+     * @Groups({"tasklist_read"})
      */
     private $Tasks;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"tasklist_read"})
      */
     private $Description;
 

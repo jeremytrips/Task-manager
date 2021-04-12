@@ -19,11 +19,11 @@
                 {% for tasklist in tasklists_results %}
                     <tbody>
                         <tr class="table-active">
-                            <td style="cursor: pointer; text-align:center;"  onclick="window.location='{{  path('task_list', {'id': tasklist.id}) }}';">{{tasklist.title}}</td>
+                            <td style="cursor: pointer; text-align:center;"  onclick="window.location='{{  path('view_tasklist', {'id': tasklist.id}) }}';">{{tasklist.title}}</td>
                             <td style="text-align:center;">{{tasklist.dateModified | date('d/m/y')}}</td>
                             <td style="text-align:center;">{{tasklist.dateCreated | date('d/m/y')}}</td>
                             <td style="padding-top: 4px;padding-bottom: 0px;">
-                                <button type="button" class="btn btn-outline-danger" onclick="window.location='{{  path('delete_list', {'id': tasklist.id}) }}';" style="float: right;">Delete</button>
+                                <button type="button" class="btn btn-outline-danger" onclick="window.location='{{  path('delete_tasklist', {'id': tasklist.id}) }}';" style="float: right;">Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -41,7 +41,7 @@
             <tbody>
                 {% for task in tasks_results %}
                     <tr class="table-active" style="width: 100px; overflow: hidden;">
-                            <td id="taskId{{task.id}}" style="width: 10%; overflow: hidden; text-align:center;"><a href="{{ path('task_list', {'id': task.taskList.id})}}">{{task.Description}}</a></td>
+                            <td id="taskId{{task.id}}" style="width: 10%; overflow: hidden; text-align:center;"><a href="{{ path('view_tasklist', {'id': task.taskList.id})}}">{{task.Description}}</a></td>
                             <td style="width: 5%; text-align:center;">{{task.dateCreated | date('d/m/y')}}</td>
                             <td style="width: 75%; padding-top: 0px;padding-bottom: 0px;">
                                 <Button onClick="window.location='{{path('set_reset_task', {'id': task.id} )}}';" style="border: none; color: {%if task.IsDone%}green{%else%}red{%endif%}; padding: 12px 16px; font-size: 16px; cursor: pointer; background: transparent">

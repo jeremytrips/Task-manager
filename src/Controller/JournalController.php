@@ -27,7 +27,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 class JournalController extends AbstractController
 {
     /**
-     * @Route("/", name="lists")
+     * @Route("/", name="tasklist:list")
      */
     public function index(TaskListRepository $repo, LoggerInterface $logger)
     {
@@ -101,7 +101,7 @@ class JournalController extends AbstractController
     }
 
     /**
-     * @Route("/delete/{id}", name="delete_list")
+     * @Route("/delete/{id}", name="delete_tasklist")
      */
     public function DeleteList($id, TaskListRepository $repo, EntityManagerInterface $manager, LoggerInterface $logger)
     {
@@ -116,7 +116,7 @@ class JournalController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="task_list", requirements={"id":"\d+"})
+     * @Route("/{id}", name="view_tasklist", requirements={"id":"\d+"})
      */
     public function ListTaskOfAList(TaskList $taskList, LoggerInterface $logger)
     {
@@ -193,8 +193,6 @@ class JournalController extends AbstractController
                 'test.html.twig',
             );
         }
-
-
     }
 
     /**

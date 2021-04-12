@@ -23,11 +23,11 @@
             {% for tasklist in tasklists %}
                 <tbody>
                     <tr class="table-active">
-                        <td  style="cursor: pointer; text-align:center;"  onclick="window.location='{{  path('task_list', {'id': tasklist.id}) }}';">{{tasklist.title}}</td>
+                        <td  style="cursor: pointer; text-align:center;"  onclick="window.location='{{  path('view_tasklist', {'id': tasklist.id}) }}';">{{tasklist.title}}</td>
                         <td style="text-align:center;">{{tasklist.dateModified | date('d/m/y')}}</td>
                         <td style="text-align:center;">{{tasklist.dateCreated | date('d/m/y')}}</td>
                         <td style="padding-top: 4px;padding-bottom: 0px;">
-                            <button type="button" class="btn btn-outline-danger" onclick="window.location='{{  path('delete_list', {'id': tasklist.id}) }}';" style="float: right;">Delete</button>
+                            <button type="button" class="btn btn-outline-danger" onclick="window.location='{{  path('delete_tasklist', {'id': tasklist.id}) }}';" style="float: right;">Delete</button>
                         </td>
                     </tr>
                 </tbody>
