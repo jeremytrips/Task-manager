@@ -13,16 +13,11 @@ use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\VarDumper\VarDumper;
 
-use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
 class JournalController extends AbstractController
 {
@@ -92,7 +87,7 @@ class JournalController extends AbstractController
                      ->setDateModified(new DateTime());
             $manager->persist($taskList);
             $manager->flush();
-            return $this->redirectToRoute("task_list", ['id'=>$taskList->getId()]);
+            return $this->redirectToRoute("view_tasklist", ['id'=>$taskList->getId()]);
         }
         // Todo redirect with errors
         return $this->render(
@@ -112,7 +107,7 @@ class JournalController extends AbstractController
         
         $this->addFlash("notice", sprintf("List %s has been deleted", $listTitle));
 
-        return $this->redirectToRoute("lists");
+        return $this->redirectToRoute("view_tasklist");
     }
 
     /**
@@ -169,7 +164,7 @@ class JournalController extends AbstractController
                      ->setTaskList($taskList);
             $manager->persist($task);
             $manager->flush();
-            return $this->redirectToRoute("task_list", ['id'=>$id]);
+            return $this->redirectToRoute("view_tasklist", ['id'=>$id]);
         } else {
             return $this->render('test.html.twig');
         }
@@ -187,7 +182,7 @@ class JournalController extends AbstractController
             $task->setDescription($newDescription);
             $manager->persist($task);
             $manager->flush();
-            return $this->redirectToRoute("task_list", ['id'=>$task->getTaskList()->getId()]);
+            return $this->redirectToRoute("view_tasklist", ['id'=>$task->getTaskList()->getId()]);
         } else {
             return $this->render(
                 'test.html.twig',
@@ -204,20 +199,21 @@ class JournalController extends AbstractController
         $listId = $task->getTaskList()->getId(); 
         $task->setIsDone(!$task->getIsDone());
         $manager->flush();
-        return $this->redirectToRoute("task_list", ['id'=>$listId]);
+        return $this->redirectToRoute("view_tasklist", ['id'=>$listId]);
     }
 
     /**
      * @Route("task/delete/{id}", name="delete_task")
      */
-    public function DeleteTask(Task $task, EntityManagerInterface $manager)
+    public function DeleteTask($id, TaskRepository $repo, EntityManagerInterface $manager)
     {
+        $task = $repo->find($id);
         $taskList = $task->getTaskList();
         $taskList->setDateModified(new DateTime());
         $manager->flush();
         $manager->remove($task);
         $manager->flush();
-        return $this->redirectToRoute("task_list", ['id'=>$taskList->getId()]);
+        return $this->redirectToRoute("view_tasklist", ['id'=>$taskList->getId()]);
     }
 
 }
