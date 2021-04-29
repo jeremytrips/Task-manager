@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TaskRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=TaskRepository::class)
@@ -15,26 +17,26 @@ class Task
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasks_read", "querry"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"tasklist_read"})
-     * 
+     * @Assert\NotBlank
+     * @Groups({"tasks_read", "querry"})
      */
     private $Description;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasks_read", "querry"})
      */
     private $DateCreated;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasks_read", "querry"})
      */
     private $IsDone;
 

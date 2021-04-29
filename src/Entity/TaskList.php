@@ -7,6 +7,7 @@ use App\Repository\TaskListRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TaskListRepository::class)
@@ -17,37 +18,39 @@ class TaskList
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasklist_read", "querry"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasklist_read", "querry"})
+     * @Assert\NotBlank
      */
     private $Title;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasklist_read", "querry"})
      */
     private $DateCreated;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasklist_read", "querry"})
      */
     private $DateModified;
 
     /**
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="taskList", cascade={"remove"})
-     * @Groups({"tasklist_read"})
      */
+    //  * @Groups({"tasklist_read"})
     private $Tasks;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"tasklist_read"})
+     * @Groups({"tasklist_read", "querry"})
+     * @Assert\NotBlank
      */
     private $Description;
 

@@ -23,7 +23,7 @@
             {% for tasklist in tasklists %}
                 <tbody>
                     <tr class="table-active">
-                        <td  style="cursor: pointer; text-align:center;"  onclick="window.location='{{  path('view_tasklist', {'id': tasklist.id}) }}';">{{tasklist.title}}</td>
+                        <td style="cursor: pointer; text-align:center;"  onclick="window.location='{{  path('view_tasklist', {'id': tasklist.id}) }}';">{{tasklist.title}}</td>
                         <td style="text-align:center;">{{tasklist.dateModified | date('d/m/y')}}</td>
                         <td style="text-align:center;">{{tasklist.dateCreated | date('d/m/y')}}</td>
                         <td style="padding-top: 4px;padding-bottom: 0px;">
