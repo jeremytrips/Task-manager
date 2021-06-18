@@ -47,9 +47,16 @@ class ApiJournalController extends AbstractController
     }
 
     /**
-     * @Route("/api/journal/create", name="api_create_taskList", methods={"POST"})
+     * @Route("/api/journal/create", name="api_create_taskList", methods={"POST","OPTIONS"})
      */
-    public function createTaskList(Request $request, EntityManagerInterface $em, SerializerInterface $serializer, ValidatorInterface $validator){
+    public function createTaskList(Request $request, EntityManagerInterface $em, SerializerInterface $serializer, ValidatorInterface $validator, LoggerInterface $l){
+        if ($request->isMethod('OPTIONS')) {
+            return $this->json(
+                [], 
+                200, 
+                ["Access-Control-Allow-Origin" => "*", "Access-Control-Allow-Methods" => "GET, PUT, POST, DELETE"]
+            );
+        }
         try {
             $rcvData = $request->getContent();
             $taskList = $serializer->deserialize($rcvData, TaskList::class, 'json');
@@ -57,11 +64,21 @@ class ApiJournalController extends AbstractController
             $taskList->setDateModified(new DateTime());
             $errors = $validator->validate($taskList);
             if(count($errors) > 0){
-                return $this->json($errors, 400, [],[]);
+                return $this->json(
+                    $errors, 
+                    400, 
+                    ["Access-Control-Allow-Origin" => "*", "Access-Control-Allow-Methods" => "GET, PUT, POST, DELETE"],
+                    []
+                );
             } else {
                 $em->persist($taskList);
                 $em->flush();
-                return $this->json($taskList, 201, [], []);
+                return $this->json(
+                    $taskList, 
+                    201, 
+                    ["Access-Control-Allow-Origin" => "*", "Access-Control-Allow-Methods" => "GET, PUT, POST, DELETE"],
+                    []
+                );
             }
 
             
@@ -69,7 +86,7 @@ class ApiJournalController extends AbstractController
             return $this->json([
                 'status'=> 400,
                 'message'=> $e->getMessage()
-            ], 400, []);
+            ], 400, ["Access-Control-Allow-Origin" => "*", "Access-Control-Allow-Methods" => "GET, PUT, POST, DELETE"]);
         }
     }
 
@@ -92,9 +109,12 @@ class ApiJournalController extends AbstractController
     }
 
     /**
-     * @Route("/api/task/create/{id}", name="api_create_task", methods={"POST"})
+     * @Route("/api/task/create/{id}", name="api_create_task", methods={"POST","OPTIONS"})
      */
     public function createTask($id, Request $request, TaskListRepository $repo, EntityManagerInterface $em, SerializerInterface $serializer, ValidatorInterface $validator){
+        if ($request->isMethod('OPTIONS')) {
+            return $this->json([], 200, ["Access-Control-Allow-Origin" => "*", "Access-Control-Allow-Headers" => "*", "Access-Control-Allow-Methods" => "*"]);
+        }
         try {
             $taskList = $repo->find($id);
             $task = $serializer->deserialize($request->getContent(), Task::class, 'json');
@@ -103,14 +123,14 @@ class ApiJournalController extends AbstractController
             $task->setTaskList($taskList);
             $errors = $validator->validate($task);
             if(count($errors) > 0){
-                return $this->json($errors, 400, ["Access-Control-Allow-Origin"=>"*"]);
+                return $this->json($errors, 400, ["Access-Control-Allow-Origin" => "*", "Access-Control-Allow-Headers" => "*", "Access-Control-Allow-Methods" => "*"]);
             } else {
                 $taskList = $task->getTaskList();
                 $taskList->setDateModified(new DateTime());
                 $em->flush();
                 $em->persist($task);
                 $em->flush();
-                return $this->json($task, 201, ["Access-Control-Allow-Origin"=>"*"], ['groups'=>'tasks_read']);
+                return $this->json($task, 201,  ["Access-Control-Allow-Origin" => "*", "Access-Control-Allow-Headers" => "*", "Access-Control-Allow-Methods" => "*"], ['groups'=>'tasks_read']);
             }
    
         } catch (NotEncodableValueException $e) {
@@ -188,7 +208,7 @@ class ApiJournalController extends AbstractController
             $manager->flush();
             $manager->remove($task);
             $manager->flush();
-            return $this->json("", 200, ["Access-Control-Allow-Origin"=>"*"], ['groups'=>'query']);
+            return $this->json("", 200, ["Access-Control-Allow-Origin"=>"*"], );
         } catch (NotEncodableValueException $e) {
             return $this->json([
                 'status'=> 400,
@@ -203,7 +223,7 @@ class ApiJournalController extends AbstractController
     public function query(string $toQuerry, TaskRepository $taskRepo, TaskListRepository $taskListRepo, LoggerInterface $l){        
         $taskListQuery = $taskListRepo->findByQuery($toQuerry);
         $tasksQuery = $taskRepo->findByQuery($toQuerry);
-        return $this->json(["taskLists"=>$taskListQuery, "tasks"=>$tasksQuery], 200, [], );
+        return $this->json(["taskLists"=>$taskListQuery, "tasks"=>$tasksQuery], 200, [], ['groups'=>'query']);
     }
 
 }

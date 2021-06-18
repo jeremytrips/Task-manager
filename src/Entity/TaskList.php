@@ -18,26 +18,26 @@ class TaskList
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"tasklist_read", "querry"})
+     * @Groups({"tasklist_read", "query"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"tasklist_read", "querry"})
+     * @Groups({"tasklist_read", "query"})
      * @Assert\NotBlank
      */
     private $Title;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"tasklist_read", "querry"})
+     * @Groups({"tasklist_read", "query"})
      */
     private $DateCreated;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"tasklist_read", "querry"})
+     * @Groups({"tasklist_read", "query"})
      */
     private $DateModified;
 
@@ -49,7 +49,7 @@ class TaskList
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"tasklist_read", "querry"})
+     * @Groups({"tasklist_read", "query"})
      * @Assert\NotBlank
      */
     private $Description;

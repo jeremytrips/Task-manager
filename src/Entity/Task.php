@@ -17,26 +17,26 @@ class Task
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"tasks_read", "querry"})
+     * @Groups({"tasks_read", "query"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
-     * @Groups({"tasks_read", "querry"})
+     * @Groups({"tasks_read", "query"})
      */
     private $Description;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"tasks_read", "querry"})
+     * @Groups({"tasks_read", "query"})
      */
     private $DateCreated;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"tasks_read", "querry"})
+     * @Groups({"tasks_read", "query"})
      */
     private $IsDone;
 
